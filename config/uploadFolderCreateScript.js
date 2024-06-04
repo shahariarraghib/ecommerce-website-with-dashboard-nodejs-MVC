@@ -1,7 +1,8 @@
 const fs = require("fs");
 const categoriesFolder = "./public/uploads/categories";
 const customizeFolder = "./public/uploads/customize";
-const productsFolder = "./public/uploads/products";
+// const productsFolder = "./public/uploads/products";
+const productsFolder = "../public/uploads/products";
 
 // const categoriesFolder = require("../public/uploads/categories");
 // const customizeFolder = require("../public/uploads/customize");
