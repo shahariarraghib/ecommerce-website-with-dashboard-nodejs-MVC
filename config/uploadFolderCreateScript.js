@@ -1,5 +1,5 @@
 const fs = require("fs");
-const categoriesFolder = "./public/uploads/categories";
+const categoriesFolder = "../public/uploads/categories";
 const customizeFolder = "./public/uploads/customize";
 // const productsFolder = "./public/uploads/products";
 const productsFolder = "../public/uploads/products";
