@@ -6,7 +6,18 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 // Enable all CORS requests
-app.use(cors());
+const allowedOrigins = ["http://localhost:3000/"];
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+};
+// thard party middleWare
+app.use(cors(corsOptions));
 // // Import Router
 const authRouter = require("./routes/auth");
 const categoryRouter = require("./routes/categories");
