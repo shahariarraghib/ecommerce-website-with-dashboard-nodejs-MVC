@@ -5,7 +5,8 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-
+// Enable all CORS requests
+app.use(cors());
 // // Import Router
 const authRouter = require("./routes/auth");
 const categoryRouter = require("./routes/categories");
@@ -16,7 +17,6 @@ const usersRouter = require("./routes/users");
 const customizeRouter = require("./routes/customize");
 // Import Auth middleware for check user login or not
 // const { loginCheck } = require("./middleware/auth");
-
 
 // Database Connection
 mongoose
