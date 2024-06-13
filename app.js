@@ -15,7 +15,7 @@ const orderRouter = require("./routes/orders");
 const usersRouter = require("./routes/users");
 const customizeRouter = require("./routes/customize");
 // Import Auth middleware for check user login or not
-const { loginCheck } = require("./middleware/auth");
+// const { loginCheck } = require("./middleware/auth");
 
 
 // Database Connection
