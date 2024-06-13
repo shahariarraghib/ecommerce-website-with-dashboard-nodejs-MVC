@@ -103,86 +103,6 @@ class Product {
     }
   }
 
-  // async postEditProduct(req, res) {
-  //   console.log(req.body);
-  //   let {
-  //     pId,
-  //     pName,
-  //     pDescription,
-  //     pPrice,
-  //     pQuantity,
-  //     pCategory,
-  //     pOffer,
-  //     pStatus,
-  //     pImages,
-  //   } = req.body;
-  //   let editImages = req.files;
-
-  //   // Validate other fields
-  //   if (
-  //     !pId ||
-  //     !pName ||
-  //     !pDescription ||
-  //     !pPrice ||
-  //     !pQuantity ||
-  //     !pCategory ||
-  //     !pOffer ||
-  //     !pStatus
-  //   ) {
-  //     return res.json({ error: "All fields must be required" });
-  //   }
-  //   // Validate Name and description
-  //   if (pName.length > 255 || pDescription.length > 3000) {
-  //     return res.json({
-  //       error:
-  //         "Name must be less than 255 characters and description must be less than 3000 characters",
-  //     });
-  //   }
-  //   // Validate Update Images
-  //   if (editImages && editImages.length === 1) {
-  //     Product.deleteImages(editImages, "file");
-  //     return res.json({ error: "Must need to provide 2 images" });
-  //   }
-
-  //   let editData = {
-  //     pName,
-  //     pDescription,
-  //     pPrice,
-  //     pQuantity,
-  //     pCategory,
-  //     pOffer,
-  //     pStatus,
-  //   };
-
-  //   if (editImages && editImages.length === 2) {
-  //     try {
-  //       let allEditImages = [];
-  //       for (const img of editImages) {
-  //         const imageUrl = await uploadToImgbb(img);
-  //         allEditImages.push(imageUrl);
-  //       }
-  //       editData = { ...editData, pImages: allEditImages };
-  //       Product.deleteImages(pImages.split(","), "string"); // Deleting old images if necessary
-  //     } catch (error) {
-  //       return res.json({ error: "Failed to upload images to imgbb" });
-  //     }
-  //   }
-
-  //   try {
-  //     let editProduct = productModel.findByIdAndUpdate(pId, editData);
-  //     editProduct.exec((err) => {
-  //       if (err) {
-  //         console.log(err);
-  //         return res.json({ error: "Failed to edit product" });
-  //       }
-  //       return res.json({ success: "Product edited successfully" });
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     return res.json({ error: "An error occurred while editing the product" });
-  //   }
-  // }
-
   async postEditProduct(req, res) {
     console.log("Request body:", req.body);
 
@@ -250,7 +170,7 @@ class Product {
         // Deleting old images if necessary
         if (pImages) {
           console.log("Deleting old images:", pImages);
-          Product.deleteImages(pImages.split(","), "string");
+          // Product.deleteImages(pImages.split(","), "string");
         }
       } catch (error) {
         console.error("Failed to upload images to imgbb:", error);
@@ -286,11 +206,11 @@ class Product {
       return res.json({ error: "All filled must be required" });
     } else {
       try {
-        let deleteProductObj = await productModel.findById(pId);
+        // let deleteProductObj = await productModel.findById(pId);
         let deleteProduct = await productModel.findByIdAndDelete(pId);
         if (deleteProduct) {
           // Delete Image from uploads -> products folder
-          Product.deleteImages(deleteProductObj.pImages, "string");
+          // Product.deleteImages(deleteProductObj.pImages, "string");
           return res.json({ success: "Product deleted successfully" });
         }
       } catch (err) {

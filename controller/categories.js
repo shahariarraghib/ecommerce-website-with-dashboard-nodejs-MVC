@@ -74,25 +74,19 @@ class Category {
   async getDeleteCategory(req, res) {
     let { cId } = req.body;
     if (!cId) {
-      return res.json({ error: "All filled must be required" });
-    } else {
-      try {
-        let deletedCategoryFile = await categoryModel.findById(cId);
-        // const filePath = `../server/public/uploads/categories/${deletedCategoryFile.cImage}`;
+      return res.json({ error: "Category ID is required" });
+    }
 
-        let deleteCategory = await categoryModel.findByIdAndDelete(cId);
-        if (deleteCategory) {
-          // Delete Image from uploads -> categories folder
-          // fs.unlink(filePath, (err) => {
-          //   if (err) {
-          //     console.log(err);
-          //   }
-          //   return res.json({ success: "Category deleted successfully" });
-          // });
-        }
-      } catch (err) {
-        console.log(err);
+    try {
+      let deleteCategory = await categoryModel.findByIdAndDelete(cId);
+      if (deleteCategory) {
+        return res.json({ success: "Category deleted successfully" });
+      } else {
+        return res.json({ error: "Category not found" });
       }
+    } catch (err) {
+      console.log(err);
+      return res.status(500).json({ error: "Internal server error" });
     }
   }
 }
