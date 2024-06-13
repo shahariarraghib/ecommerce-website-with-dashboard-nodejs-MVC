@@ -1,6 +1,6 @@
 const { toTitleCase } = require("../config/function");
 const categoryModel = require("../models/categories");
-const fs = require("fs");
+// const fs = require("fs");
 
 class Category {
   async getAllCategory(req, res) {
@@ -78,17 +78,17 @@ class Category {
     } else {
       try {
         let deletedCategoryFile = await categoryModel.findById(cId);
-        const filePath = `../server/public/uploads/categories/${deletedCategoryFile.cImage}`;
+        // const filePath = `../server/public/uploads/categories/${deletedCategoryFile.cImage}`;
 
         let deleteCategory = await categoryModel.findByIdAndDelete(cId);
         if (deleteCategory) {
           // Delete Image from uploads -> categories folder
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.log(err);
-            }
-            return res.json({ success: "Category deleted successfully" });
-          });
+          // fs.unlink(filePath, (err) => {
+          //   if (err) {
+          //     console.log(err);
+          //   }
+          //   return res.json({ success: "Category deleted successfully" });
+          // });
         }
       } catch (err) {
         console.log(err);

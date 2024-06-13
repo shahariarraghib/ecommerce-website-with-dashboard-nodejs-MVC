@@ -1,4 +1,3 @@
-const fs = require("fs");
 const categoryModel = require("../models/categories");
 const productModel = require("../models/products");
 const orderModel = require("../models/orders");
@@ -43,17 +42,17 @@ class Customize {
     } else {
       try {
         let deletedSlideImage = await customizeModel.findById(id);
-        const filePath = `../server/public/uploads/customize/${deletedSlideImage.slideImage}`;
+        // const filePath = `../server/public/uploads/customize/${deletedSlideImage.slideImage}`;
 
         let deleteImage = await customizeModel.findByIdAndDelete(id);
         if (deleteImage) {
           // Delete Image from uploads -> customizes folder
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.log(err);
-            }
-            return res.json({ success: "Image deleted successfully" });
-          });
+          // fs.unlink(filePath, (err) => {
+          //   if (err) {
+          //     console.log(err);
+          //   }
+          //   return res.json({ success: "Image deleted successfully" });
+          // });
         }
       } catch (err) {
         console.log(err);
