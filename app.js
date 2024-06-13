@@ -17,9 +17,9 @@ const customizeRouter = require("./routes/customize");
 // Import Auth middleware for check user login or not
 const { loginCheck } = require("./middleware/auth");
 
-const CreateAllFolder = require("./config/uploadFolderCreateScript");
-/* Create All Uploads Folder if not exists | For Uploading Images */
-CreateAllFolder();
+// const CreateAllFolder = require("./config/uploadFolderCreateScript");
+// /* Create All Uploads Folder if not exists | For Uploading Images */
+// CreateAllFolder();
 
 // Database Connection
 mongoose

@@ -15,28 +15,18 @@ class Category {
   }
 
   async postAddCategory(req, res) {
-    let { cName, cDescription, cStatus } = req.body;
-    let cImage = req.file.filename;
-    const filePath = `../server/public/uploads/categories/${cImage}`;
+    console.log(req.body);
+    let { cName, cDescription, cStatus, cImage } = req.body;
 
     if (!cName || !cDescription || !cStatus || !cImage) {
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-        }
-        return res.json({ error: "All filled must be required" });
-      });
+      return res.json({ error: "All fields must be required" });
     } else {
       cName = toTitleCase(cName);
+
       try {
         let checkCategoryExists = await categoryModel.findOne({ cName: cName });
         if (checkCategoryExists) {
-          fs.unlink(filePath, (err) => {
-            if (err) {
-              console.log(err);
-            }
-            return res.json({ error: "Category already exists" });
-          });
+          return res.json({ error: "Category already exists" });
         } else {
           let newCategory = new categoryModel({
             cName,
@@ -47,11 +37,16 @@ class Category {
           await newCategory.save((err) => {
             if (!err) {
               return res.json({ success: "Category created successfully" });
+            } else {
+              return res.json({ error: "Failed to create category" });
             }
           });
         }
       } catch (err) {
         console.log(err);
+        return res.json({
+          error: "An error occurred while creating the category",
+        });
       }
     }
   }
@@ -87,7 +82,7 @@ class Category {
 
         let deleteCategory = await categoryModel.findByIdAndDelete(cId);
         if (deleteCategory) {
-          // Delete Image from uploads -> categories folder 
+          // Delete Image from uploads -> categories folder
           fs.unlink(filePath, (err) => {
             if (err) {
               console.log(err);

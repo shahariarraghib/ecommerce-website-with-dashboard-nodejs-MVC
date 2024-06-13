@@ -35,6 +35,7 @@ class Product {
         .sort({ _id: -1 });
 
       if (Products) {
+        // console.log(Products);
         return res.json({ Products });
       }
     } catch (err) {
@@ -43,41 +44,47 @@ class Product {
   }
 
   async postAddProduct(req, res) {
-    let { pName, pDescription, pPrice, pQuantity, pCategory, pOffer, pStatus } =
-      req.body;
-    let images = req.files;
+    console.log("bb", req.body);
+    let {
+      pName,
+      pDescription,
+      pPrice,
+      pQuantity,
+      pCategory,
+      pOffer,
+      pStatus,
+      pImage,
+    } = req.body;
+
     // Validation
     if (
-      !pName |
-      !pDescription |
-      !pPrice |
-      !pQuantity |
-      !pCategory |
-      !pOffer |
+      !pName ||
+      !pDescription ||
+      !pPrice ||
+      !pQuantity ||
+      !pCategory ||
+      !pOffer ||
       !pStatus
     ) {
-      Product.deleteImages(images, "file");
-      return res.json({ error: "All filled must be required" });
+      return res.json({ error: "All fields must be required" });
     }
+
     // Validate Name and description
     else if (pName.length > 255 || pDescription.length > 3000) {
-      Product.deleteImages(images, "file");
       return res.json({
-        error: "Name 255 & Description must not be 3000 charecter long",
+        error:
+          "Name must not exceed 255 characters & Description must not exceed 3000 characters",
       });
     }
+
     // Validate Images
-    else if (images.length !== 2) {
-      Product.deleteImages(images, "file");
-      return res.json({ error: "Must need to provide 2 images" });
+    else if (!Array.isArray(pImage) || pImage.length !== 2) {
+      return res.json({ error: "Must provide exactly 2 images" });
     } else {
       try {
-        let allImages = [];
-        for (const img of images) {
-          allImages.push(img.filename);
-        }
+        // Save the new product
         let newProduct = new productModel({
-          pImages: allImages,
+          pImages: pImage, // Assuming pImage is an array of URLs
           pName,
           pDescription,
           pPrice,
@@ -86,17 +93,101 @@ class Product {
           pOffer,
           pStatus,
         });
+
         let save = await newProduct.save();
         if (save) {
           return res.json({ success: "Product created successfully" });
         }
       } catch (err) {
         console.log(err);
+        return res.json({ error: "Something went wrong" });
       }
     }
   }
 
+  // async postEditProduct(req, res) {
+  //   console.log(req.body);
+  //   let {
+  //     pId,
+  //     pName,
+  //     pDescription,
+  //     pPrice,
+  //     pQuantity,
+  //     pCategory,
+  //     pOffer,
+  //     pStatus,
+  //     pImages,
+  //   } = req.body;
+  //   let editImages = req.files;
+
+  //   // Validate other fields
+  //   if (
+  //     !pId ||
+  //     !pName ||
+  //     !pDescription ||
+  //     !pPrice ||
+  //     !pQuantity ||
+  //     !pCategory ||
+  //     !pOffer ||
+  //     !pStatus
+  //   ) {
+  //     return res.json({ error: "All fields must be required" });
+  //   }
+  //   // Validate Name and description
+  //   if (pName.length > 255 || pDescription.length > 3000) {
+  //     return res.json({
+  //       error:
+  //         "Name must be less than 255 characters and description must be less than 3000 characters",
+  //     });
+  //   }
+  //   // Validate Update Images
+  //   if (editImages && editImages.length === 1) {
+  //     Product.deleteImages(editImages, "file");
+  //     return res.json({ error: "Must need to provide 2 images" });
+  //   }
+
+  //   let editData = {
+  //     pName,
+  //     pDescription,
+  //     pPrice,
+  //     pQuantity,
+  //     pCategory,
+  //     pOffer,
+  //     pStatus,
+  //   };
+
+  //   if (editImages && editImages.length === 2) {
+  //     try {
+  //       let allEditImages = [];
+  //       for (const img of editImages) {
+  //         const imageUrl = await uploadToImgbb(img);
+  //         allEditImages.push(imageUrl);
+  //       }
+  //       editData = { ...editData, pImages: allEditImages };
+  //       Product.deleteImages(pImages.split(","), "string"); // Deleting old images if necessary
+  //     } catch (error) {
+  //       return res.json({ error: "Failed to upload images to imgbb" });
+  //     }
+  //   }
+
+  //   try {
+  //     let editProduct = productModel.findByIdAndUpdate(pId, editData);
+  //     editProduct.exec((err) => {
+  //       if (err) {
+  //         console.log(err);
+  //         return res.json({ error: "Failed to edit product" });
+  //       }
+  //       return res.json({ success: "Product edited successfully" });
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     return res.json({ error: "An error occurred while editing the product" });
+  //   }
+  // }
+
   async postEditProduct(req, res) {
+    console.log("Request body:", req.body);
+
     let {
       pId,
       pName,
@@ -108,58 +199,86 @@ class Product {
       pStatus,
       pImages,
     } = req.body;
-    let editImages = req.files;
+    let editImages = req.body.pImage;
 
-    // Validate other fileds
+    // Validate other fields
     if (
-      !pId |
-      !pName |
-      !pDescription |
-      !pPrice |
-      !pQuantity |
-      !pCategory |
-      !pOffer |
+      !pId ||
+      !pName ||
+      !pDescription ||
+      !pPrice ||
+      !pQuantity ||
+      !pCategory ||
+      !pOffer ||
       !pStatus
     ) {
-      return res.json({ error: "All filled must be required" });
+      return res.json({ error: "All fields must be required" });
     }
+
     // Validate Name and description
-    else if (pName.length > 255 || pDescription.length > 3000) {
+    if (pName.length > 255 || pDescription.length > 3000) {
       return res.json({
-        error: "Name 255 & Description must not be 3000 charecter long",
+        error:
+          "Name must be less than 255 characters and description must be less than 3000 characters",
       });
     }
+
     // Validate Update Images
-    else if (editImages && editImages.length == 1) {
-      Product.deleteImages(editImages, "file");
-      return res.json({ error: "Must need to provide 2 images" });
-    } else {
-      let editData = {
-        pName,
-        pDescription,
-        pPrice,
-        pQuantity,
-        pCategory,
-        pOffer,
-        pStatus,
-      };
-      if (editImages.length == 2) {
+    if (editImages && editImages.length !== 2) {
+      return res.json({ error: "Must provide exactly 2 images" });
+    }
+
+    let editData = {
+      pName,
+      pDescription,
+      pPrice,
+      pQuantity,
+      pCategory,
+      pOffer,
+      pStatus,
+    };
+
+    if (editImages && editImages.length === 2) {
+      try {
         let allEditImages = [];
         for (const img of editImages) {
-          allEditImages.push(img.filename);
+          console.log("Uploading image:", img);
+          
+          console.log("Uploaded image URL:", editImages);
+          allEditImages.push(editImages);
         }
-        editData = { ...editData, pImages: allEditImages };
-        Product.deleteImages(pImages.split(","), "string");
+        editData.pImages = allEditImages;
+
+        // Deleting old images if necessary
+        if (pImages) {
+          console.log("Deleting old images:", pImages);
+          Product.deleteImages(pImages.split(","), "string");
+        }
+      } catch (error) {
+        console.error("Failed to upload images to imgbb:", error);
+        return res.json({ error: "Failed to upload images to imgbb" });
       }
-      try {
-        let editProduct = productModel.findByIdAndUpdate(pId, editData);
-        editProduct.exec((err) => {
-          if (err) console.log(err);
-          return res.json({ success: "Product edit successfully" });
+    }
+
+    try {
+      console.log("Updating product with data:", editData);
+      let editProduct = productModel.findByIdAndUpdate(pId, editData, {
+        new: true,
+      });
+      editProduct.exec((err, updatedProduct) => {
+        if (err) {
+          console.error("Failed to edit product:", err);
+          return res.json({ error: "Failed to edit product" });
+        }
+        console.log("Product edited successfully:", updatedProduct);
+        return res.json({
+          success: "Product edited successfully",
+          product: updatedProduct,
         });
-      } catch (err) {
-        console.log(err);
-      }
+      });
+    } catch (err) {
+      console.error("An error occurred while editing the product:", err);
+      return res.json({ error: "An error occurred while editing the product" });
     }
   }
 
