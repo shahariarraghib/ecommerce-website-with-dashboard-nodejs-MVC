@@ -6,7 +6,7 @@ const morgan = require("morgan");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 // Enable all CORS requests
-const allowedOrigins = ["https://ecommerce-website-peach-one.vercel.app/"];
+const allowedOrigins = ["https://ecommerce-website-peach-one.vercel.app"];
 const corsOptions = {
   origin: (origin, callback) => {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
